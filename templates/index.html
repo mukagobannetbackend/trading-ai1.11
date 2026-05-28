@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Journal AI - Master Your Trading Edge</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div id="app">
+        <!-- Login/Verification Page -->
+        <div id="auth-page" class="auth-container">
+            <div class="auth-wrapper">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h1 class="app-title">Trading Journal AI</h1>
+                        <p class="app-subtitle">Master Your Trading Edge</p>
+                    </div>
+
+                    <!-- Step 1: Email Input -->
+                    <div id="email-step" class="auth-step active">
+                        <h2>Enter Your Email</h2>
+                        <form id="email-form" onsubmit="handleEmailSubmit(event)">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    placeholder="you@example.com"
+                                    required
+                                >
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Send Verification Code
+                            </button>
+                        </form>
+                        <p class="auth-info">We'll send a 6-digit code to your email</p>
+                    </div>
+
+                    <!-- Step 2: Code Verification -->
+                    <div id="code-step" class="auth-step">
+                        <h2>Verify Your Email</h2>
+                        <p class="verify-email">Code sent to <span id="display-email"></span></p>
+                        
+                        <form id="code-form" onsubmit="handleCodeSubmit(event)">
+                            <div class="form-group">
+                                <label for="verification-code">Verification Code</label>
+                                <input 
+                                    type="text" 
+                                    id="verification-code" 
+                                    name="code" 
+                                    placeholder="000000"
+                                    maxlength="6"
+                                    inputmode="numeric"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="user-name">Your Name (Optional)</label>
+                                <input 
+                                    type="text" 
+                                    id="user-name" 
+                                    name="name" 
+                                    placeholder="John Trader"
+                                >
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Verify & Login
+                            </button>
+                        </form>
+
+                        <div class="auth-actions">
+                            <button class="btn-link" onclick="goBackToEmail()">Use different email</button>
+                            <button class="btn-link" onclick="resendCode()">Resend code</button>
+                        </div>
+
+                        <p class="code-expiry">Code expires in <span id="timer">10:00</span></p>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message" class="error-message"></div>
+
+                    <!-- Success Message -->
+                    <div id="success-message" class="success-message"></div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Pullback Entry Model</h3>
+                        <p>Complete checklist for HTF direction, swing range, BOS/MSS detection</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <h3>ProTrend Entry Model</h3>
+                        <p>Trend confirmation, swing range markup, POI reaction detection</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>AI Analysis</h3>
+                        <p>Automated screenshot analysis and trade journal generation</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Advanced Analytics</h3>
+                        <p>Win rate tracking, pair performance, model comparison</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page (Hidden by default) -->
+        <div id="dashboard-page" style="display: none;">
+            <!-- Will be loaded via dashboard.html -->
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

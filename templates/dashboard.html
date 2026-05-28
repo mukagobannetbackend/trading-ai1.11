@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Trading Journal AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-title">TJ AI</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-page="dashboard" href="#dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="pullback" href="#pullback">
+                        <span class="nav-icon">🎯</span>
+                        <span>Pullback Model</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="protrend" href="#protrend">
+                        <span class="nav-icon">📈</span>
+                        <span>ProTrend Model</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="screenshot" href="#screenshot">
+                        <span class="nav-icon">🖼️</span>
+                        <span>Screenshot Review</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="journal" href="#journal">
+                        <span class="nav-icon">📝</span>
+                        <span>Trade Journal</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="analytics" href="#analytics">
+                        <span class="nav-icon">📊</span>
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="insights" href="#insights">
+                        <span class="nav-icon">🧠</span>
+                        <span>Behavior Insights</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-page="report" href="#report">
+                        <span class="nav-icon">📄</span>
+                        <span>Monthly Report</span>
+                    </a>
+                </li>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="logout()">Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content">
+                <div class="page-header">
+                    <h1 class="page-title">Welcome, <span id="user-name-display">Trader</span></h1>
+                    <p class="page-subtitle">Track your trades, analyze your setups, and master your edge</p>
+                </div>
+
+                <!-- Overtrading Warning -->
+                <div id="overtrading-warning" style="display: none;"></div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-trades">0</div>
+                        <div class="stat-label">Total Trades</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="win-rate-display">0%</div>
+                        <div class="stat-label">Win Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="pullback-count">0</div>
+                        <div class="stat-label">Pullback Trades</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="protrend-count">0</div>
+                        <div class="stat-label">ProTrend Trades</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="action-card" onclick="navigateTo('pullback')">
+                        <h3>🎯 Pullback Entry Model</h3>
+                        <p>HTF direction → Swing range → BOS/MSS → Liquidity sweep</p>
+                        <button class="btn btn-primary">Start Checklist</button>
+                    </div>
+                    <div class="action-card" onclick="navigateTo('protrend')">
+                        <h3>📈 ProTrend Entry Model</h3>
+                        <p>Trend direction → Swing range → POI reaction → Entry</p>
+                        <button class="btn btn-primary">Start Checklist</button>
+                    </div>
+                    <div class="action-card" onclick="navigateTo('screenshot')">
+                        <h3>🖼️ Screenshot Review</h3>
+                        <p>AI-powered analysis of MSS, FVG, liquidity sweeps</p>
+                        <button class="btn btn-primary">Upload Chart</button>
+                    </div>
+                    <div class="action-card" onclick="navigateTo('journal')">
+                        <h3>📝 Trade Journal</h3>
+                        <p>Log trades with AI-generated insights</p>
+                        <button class="btn btn-primary">View Journal</button>
+                    </div>
+                </div>
+
+                <!-- Recent Trades -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Recent Trades</h2>
+                    </div>
+                    <div id="recent-trades-list"></div>
+                </div>
+            </div>
+
+            <!-- Pullback Model Page -->
+            <div id="pullback-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Pullback Entry Model</h1>
+                    <p class="page-subtitle">Complete checklist for HTF direction, swing range, BOS/MSS detection, and liquidity sweeps</p>
+                </div>
+
+                <div class="card">
+                    <form id="pullback-form" onsubmit="submitPullbackChecklist(event)">
+                        <div class="form-group">
+                            <label>Currency Pair</label>
+                            <input type="text" name="currency_pair" placeholder="EURUSD" required>
+                        </div>
+
+                        <h3>Checklist Items</h3>
+                        <div class="checklist">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="htf_direction_confirmed">
+                                <span>HTF Direction Confirmed</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="swing_range_marked">
+                                <span>Swing Range Marked</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="bos_mss_identified">
+                                <span>BOS/MSS Identified</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="candle_marked">
+                                <span>Candle Marked</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="liquidity_sweep_detected">
+                                <span>Liquidity Sweep Detected</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="entry_zone_identified">
+                                <span>Entry Zone Identified</span>
+                            </label>
+                        </div>
+
+                        <h3>Details</h3>
+                        <div class="form-group">
+                            <label>HTF Direction</label>
+                            <select name="htf_direction">
+                                <option value="">Select...</option>
+                                <option value="up">Uptrend</option>
+                                <option value="down">Downtrend</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Swing High</label>
+                                <input type="number" name="swing_high" step="0.00001" placeholder="0.00000">
+                            </div>
+                            <div class="form-group">
+                                <label>Swing Low</label>
+                                <input type="number" name="swing_low" step="0.00001" placeholder="0.00000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Liquidity Type</label>
+                            <select name="liquidity_type">
+                                <option value="">Select...</option>
+                                <option value="buy-side">Buy-Side Liquidity</option>
+                                <option value="sell-side">Sell-Side Liquidity</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Target Zone</label>
+                            <textarea name="target_zone" placeholder="Describe your target zone..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Submit Checklist</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ProTrend Model Page -->
+            <div id="protrend-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">ProTrend Entry Model</h1>
+                    <p class="page-subtitle">Complete checklist for trend confirmation, swing range, POI reaction, and entry targeting</p>
+                </div>
+
+                <div class="card">
+                    <form id="protrend-form" onsubmit="submitProtrendChecklist(event)">
+                        <div class="form-group">
+                            <label>Currency Pair</label>
+                            <input type="text" name="currency_pair" placeholder="EURUSD" required>
+                        </div>
+
+                        <h3>Checklist Items</h3>
+                        <div class="checklist">
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="trend_direction_confirmed">
+                                <span>Trend Direction Confirmed</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="swing_range_marked">
+                                <span>Swing Range Marked</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="protected_low_marked">
+                                <span>Protected Low Marked</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="poi_reaction_detected">
+                                <span>POI Reaction Detected</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="initial_mitigation_swept">
+                                <span>Initial Mitigation Swept</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" name="entry_zone_identified">
+                                <span>Entry Zone Identified</span>
+                            </label>
+                        </div>
+
+                        <h3>Details</h3>
+                        <div class="form-group">
+                            <label>Trend Direction</label>
+                            <select name="trend_direction">
+                                <option value="">Select...</option>
+                                <option value="up">Uptrend</option>
+                                <option value="down">Downtrend</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Swing High</label>
+                                <input type="number" name="swing_high" step="0.00001" placeholder="0.00000">
+                            </div>
+                            <div class="form-group">
+                                <label>Swing Low</label>
+                                <input type="number" name="swing_low" step="0.00001" placeholder="0.00000">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Protected Low</label>
+                            <input type="number" name="protected_low" step="0.00001" placeholder="0.00000">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Target Zone</label>
+                            <textarea name="target_zone" placeholder="Describe your target zone..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Submit Checklist</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Screenshot Review Page -->
+            <div id="screenshot-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Screenshot Review</h1>
+                    <p class="page-subtitle">AI-powered analysis of MSS, FVG, liquidity sweeps, and HTF bias alignment</p>
+                </div>
+
+                <div class="card">
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">📸</div>
+                        <h3>Upload Chart Screenshot</h3>
+                        <p>Drag and drop or click to select</p>
+                        <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+
+                <div id="screenshot-analysis" style="display: none;"></div>
+            </div>
+
+            <!-- Trade Journal Page -->
+            <div id="journal-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Trade Journal</h1>
+                    <p class="page-subtitle">View and manage your logged trades</p>
+                </div>
+
+                <div class="journal-container">
+                    <div class="trades-list-panel">
+                        <h3>Recent Trades</h3>
+                        <div id="trades-list"></div>
+                    </div>
+                    <div class="trade-detail-panel">
+                        <div id="trade-detail"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analytics-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Analytics</h1>
+                    <p class="page-subtitle">Comprehensive trading performance analysis</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="win-rate-value">0%</div>
+                        <div class="stat-label">Overall Win Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="pullback-wr">0%</div>
+                        <div class="stat-label">Pullback Win Rate</div>
+                        <div class="stat-subtitle" id="pullback-trades">0 trades</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="protrend-wr">0%</div>
+                        <div class="stat-label">ProTrend Win Rate</div>
+                        <div class="stat-subtitle" id="protrend-trades">0 trades</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Behavior Insights Page -->
+            <div id="insights-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Behavior Insights</h1>
+                    <p class="page-subtitle">AI-powered insights into your trading behavior</p>
+                </div>
+
+                <div class="card">
+                    <p>Log more trades to unlock behavior pattern insights.</p>
+                </div>
+            </div>
+
+            <!-- Monthly Report Page -->
+            <div id="report-page" class="page-content" style="display: none;">
+                <div class="page-header">
+                    <h1 class="page-title">Monthly Report Card</h1>
+                    <p class="page-subtitle">Downloadable report with trade quality breakdown and performance metrics</p>
+                </div>
+
+                <div class="card">
+                    <p>Generate your monthly report to see comprehensive trading statistics.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
